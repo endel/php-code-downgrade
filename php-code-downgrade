@@ -1,0 +1,96 @@
+#!/usr/bin/php
+<?php
+require('vendor/autoload.php');
+
+if (isset($argv[1])) {
+  $root_path = $argv[1];
+
+  echo "** Warning **\n";
+  echo "Every '$root_path/**.php' file will be changed into a downgraded PHP version.\n";
+  echo "It's highly recommended to create a backup of those files.\n";
+  echo "Continue? (y/n) ";
+  $handle = popen("read; echo \$REPLY", "r");
+  $input = strtolower(trim(fgets($handle, 100)));
+  if ($input !== "y") {
+    die("Aborted.\n");
+  }
+
+} else {
+  die("Usage:\n\tphp-code-downgrade [path]\n\n");
+}
+
+function glob_recursive($pattern, $flags = 0) {
+  $files = glob($pattern, $flags);
+  foreach (glob(dirname($pattern).'/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir) {
+    $files = array_merge($files, glob_recursive($dir.'/'.basename($pattern), $flags));
+  }
+  return $files;
+}
+
+$files_to_retry = array();
+$libraries_to_ignore = array();
+
+$previous_dir = "";
+
+function transform($file) {
+  $code = galapagos\transform(file_get_contents($file));
+  file_put_contents($file, $code);
+  echo "transform: {$file}\n";
+  return true;
+}
+
+// libraries requiring version <= 5.3 should be ignored.
+foreach(glob_recursive($root_path . '/**/composer.json') as $composer_file)  {
+  $composer = json_decode(file_get_contents($composer_file), true);
+  if (isset($composer['require']) && isset($composer['require']['php'])) {
+    preg_match_all('/[0-9]+/', $composer['require']['php'], $versions);
+    $versions = array_map(function($str) { return intval($str); }, $versions[0]);
+
+    if ($versions[0] >= 5 && $versions[1] > 3) {
+      echo "{$composer_file}\n";
+    } else {
+      array_push($libraries_to_ignore, dirname($composer_file) . '/');
+    }
+  }
+}
+
+$is_ignored = function($path) use ($libraries_to_ignore) {
+  foreach($libraries_to_ignore as $library_to_ignore) {
+    if (strpos($path, $library_to_ignore) !== false) {
+      return true;
+    }
+  }
+};
+
+$i = 0;
+foreach(glob_recursive('hook/**.php') as $php_file)  {
+  $i++;
+  $dir = dirname($php_file);
+
+  if (preg_match('/\/vendor\/composer\//', $php_file) ||
+      $is_ignored($php_file)) {
+    continue;
+  }
+
+  if ($dir != $previous_dir && count($files_to_retry) > 0) {
+    foreach($files_to_retry as $i => $php_file_to_retry) {
+      try {
+        transform($php_file_to_retry);
+        $idx = array_search($php_file_to_retry, $files_to_retry);
+        array_splice($files_to_retry, $idx);
+      } catch (Exception $e) {
+        echo "Need to retry... {$php_file_to_retry}";
+      }
+    }
+  }
+
+  if (!preg_match('/\/tests?\//i', $php_file)) {
+    try {
+      transform($php_file);
+    } catch (Exception $e) {
+      array_push($files_to_retry, $php_file);
+    }
+  }
+
+  $previous_dir = $dir;
+}

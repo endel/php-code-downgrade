@@ -1,0 +1,9 @@
+{
+  "name": "php-code-downgrade",
+  "keywords": ["php", "code", "downgrade", "tool"],
+  "license": "MIT",
+  "require": {
+    "endel/galapagos": "dev-master"
+  },
+  "bin": ["php-code-downgrade"]
+}
