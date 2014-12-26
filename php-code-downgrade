@@ -63,7 +63,7 @@ $is_ignored = function($path) use ($libraries_to_ignore) {
 };
 
 $i = 0;
-foreach(glob_recursive('hook/**.php') as $php_file)  {
+foreach(glob_recursive($root_path . '/**.php') as $php_file)  {
   $i++;
   $dir = dirname($php_file);
 
@@ -79,7 +79,7 @@ foreach(glob_recursive('hook/**.php') as $php_file)  {
         $idx = array_search($php_file_to_retry, $files_to_retry);
         array_splice($files_to_retry, $idx);
       } catch (Exception $e) {
-        echo "Need to retry... {$php_file_to_retry}";
+        echo "Need to retry... {$php_file_to_retry}\n";
       }
     }
   }
