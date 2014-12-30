@@ -3,6 +3,7 @@
   "keywords": ["php", "code", "downgrade", "tool"],
   "license": "MIT",
   "require": {
+    "php": ">=5.4.0",
     "endel/galapagos": "dev-master"
   },
   "bin": ["php-code-downgrade"]
