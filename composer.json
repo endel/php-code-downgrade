@@ -1,5 +1,5 @@
 {
-  "name": "php-code-downgrade",
+  "name": "endel/php-code-downgrade",
   "keywords": ["php", "code", "downgrade", "tool"],
   "license": "MIT",
   "require": {
