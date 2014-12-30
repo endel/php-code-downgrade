@@ -97,3 +97,5 @@ foreach(glob_recursive($root_path . '/**.php') as $php_file)  {
 
   $previous_dir = $dir;
 }
+
+echo "Done.\n";
