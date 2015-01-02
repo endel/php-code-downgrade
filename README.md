@@ -18,12 +18,19 @@ Features
 - Downgrade function calls with different signature.
   * `stream_context_create`
   * `session_set_save_handler`
+- Custom node transformations
 
 Usage
 ---
 
 ```
 ./php-code-downgrade [path-to-downgrade]
+```
+
+Using custom node transformations:
+
+```
+./php-code-downgrade [path-to-downgrade] -t transformations/phalanger
 ```
 
 License

@@ -1,10 +1,12 @@
 {
   "name": "endel/php-code-downgrade",
+  "version": "0.2.0",
   "keywords": ["php", "code", "downgrade", "tool"],
   "license": "MIT",
   "require": {
     "php": ">=5.4.0",
-    "endel/galapagos": "dev-master"
+    "endel/galapagos": "dev-master",
+    "nategood/commando": "~0.2"
   },
   "bin": ["php-code-downgrade"]
 }
