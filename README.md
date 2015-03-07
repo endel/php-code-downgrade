@@ -1,7 +1,8 @@
 php-code-downgrade
 ===
 
-Tool to downgrade your PHP codebase from PHP 5.4+ to PHP 5.3.
+Tool to downgrade your PHP codebase from PHP 5.4+ to PHP 5.3. Built on top of
+[galapagos](https://github.com/endel/galapagos).
 
 Why?
 ---
