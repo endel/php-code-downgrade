@@ -4,6 +4,13 @@ php-code-downgrade
 Tool to downgrade your PHP codebase from PHP 5.4+ to PHP 5.3. Built on top of
 [galapagos](https://github.com/endel/galapagos).
 
+Consider including
+[php5.3-compatibility](https://github.com/packfire/php5.3-compatibility) package
+in your project, which includes `JsonSerializable` and
+`SessionHandlerInterface`.
+
+You may have to manually fix some remaining problems, usually they're quite simple.
+
 Why?
 ---
 
